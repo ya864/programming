@@ -1,5 +1,4 @@
 ALPHABETS_NUM = 26
-
 class TrieNode:
     """
     Trie木の1ノードを表すクラス
@@ -38,11 +37,12 @@ class Trie:
             char_num = self.__get_char_num(c)
             tmp_node = self.nodes[node_index]
             node_index = tmp_node.children[char_num]
-            
+        
+        # 存在しない場合は検索を終了
         if node_index == -1:
             return val
         
-        # 渡された文字列をprefixとした文字列が存在するか検索する
+        # 渡された文字列をprefixとした文字列が存在するか検索し、値を合計していく
         index_array = []
         index_array.append(node_index)
         while len(index_array) > 0:
