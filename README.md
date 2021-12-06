@@ -1,4 +1,5 @@
 # programming
 learning programming and algorithm
 
-### 古いものも混ざっております
+アルゴリズムの学習などで作成したコードです。
+
