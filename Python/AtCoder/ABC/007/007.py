@@ -27,15 +27,17 @@ Q = deque()
 x = [1, 0, -1, 0]
 y = [0, 1, 0, -1]
 
-ans = 0
-Q.append([sy, sx, 0])
+# 訪問歩数を記録する
+dist = [[-1 for i in range(C)] for i in range(R)]
+dist[sy][sx] = 0
+
+Q.append([sy, sx])
 
 while len(Q) > 0:
-    i,j,cnt = Q.popleft()
-    if i == gy and j == gx:
-        ans == cnt
+    i,j = Q.popleft()
     for d in range(len(x)):
-        if M[i+x[d]][j+y[d]] == ".":
-            Q.append([i+x[d], j+y[d], cnt+1])
+        if M[i+x[d]][j+y[d]] == "." and dist[i+x[d]][j+y[d]] == -1 :
+            dist[i+x[d]][j+y[d]] = dist[i][j] + 1
+            Q.append([i+x[d], j+y[d]])
 
-print(ans)    
+print(dist[gy][gx])    
