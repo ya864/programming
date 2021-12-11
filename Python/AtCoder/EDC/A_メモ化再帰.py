@@ -1,19 +1,31 @@
-N = int(input())
+# 再帰上限を増やす
+import sys
+sys.setrecursionlimit(1000000)
 
-N -= 1
+N = int(input())
 
 h = list(map(int, input().split()))
 
 cost = [0 for i in range(N)]
 
-# １つ目のコストはスタート地点からの計算のみ
-cost[1] = cost[0] + abs(h[0] - h[1])
+done = [False for i in range(N)]
 
-# 足場が2個以上ある場合
-if N > 2:
-    for i in range(2, N):
-        h[i] = min(cost[i - 1] + abs(h[i-1] - h[i]), cost[i - 2] + abs(h[i-2] - h[i - 2]))
+# メモ化再帰の実装
+def rec(i):
+    # 計算済みであれば即座に値を返す
+    if done[i]:
+        return cost[i]
+    # そうでなければ値を計算する
+    if i == 0:
+        cost[i] = 0
+    elif i == 1:
+        cost[i] = rec(0) + abs(h[0]-h[1])
+    else:
+        cost[i] = min(rec(i-1) + abs(h[i-1]-h[i]), rec(i-2) + abs(h[i-2]-h[i]))
+    # 計算済みフラグを立てて値を返す
+    done[i] = True
+    return cost[i]
 
-print(h[N])
+#答えは
+print(rec(N-1))
 
-aa
