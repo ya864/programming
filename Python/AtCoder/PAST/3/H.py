@@ -7,6 +7,8 @@ for hurdle in hurdles:
 
 cost = [9999999999 for i in range(L+1)]
 
+cost[0] = 0
+
 T1, T2, T3 = map(int,input().split())
 
 for i in range(1, L+1):
@@ -25,6 +27,6 @@ for i in range(1, L+1):
 ans = cost[L]
 for i in [L-3, L-2, L-1]:
     if i >= 0:
-        ans = min(ans, cost[i] + T1//2 + T2//2 + T2*(L-i))
+        ans = min(ans, cost[i] + T1//2 + T2//2 + T2*(L-i-1))
 
 print(ans)
