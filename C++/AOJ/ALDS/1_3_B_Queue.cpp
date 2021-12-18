@@ -46,11 +46,6 @@ int main(void)
     head = 0;
     tail = n;
 
-    for (int i = 0 ; i < n ; i++)
-    {
-        cout << Q[i].name << endl;
-    }
-
     while (head != tail) {
         p = dequeue();
         c = min(q, p.time);
