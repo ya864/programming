@@ -11,13 +11,13 @@ MOD = 10 ** 9 + 7
 
 for i in range(H):
     for j in range(W):
-        if A[H][W] == '#':
+        if A[i][j] == '#':
             continue
         if i > 0:
-            cnt[i][j] = cnt[i - 1][j]
+            cnt[i][j] += cnt[i - 1][j]
         if j > 0:
-            cnt[i][j] = cnt[i][j - 1]
+            cnt[i][j] += cnt[i][j - 1]
 
     cnt[i][j] %= MOD
 
-print(cnt[i][j])
+print(cnt[H-1][W-1])
