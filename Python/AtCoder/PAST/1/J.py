@@ -34,6 +34,7 @@ dist3 = grid_dijkstra(0, W - 1)
 ans = 10 ** 100
 for i in range(H):
     for j in range(W):
+        # 交差点の重なり分 - 2 * A[i][j]　する
         res = dist1[i][j] + dist2[i][j] + dist3[i][j] - 2 * A[i][j]
         ans = min(ans, res)
 
