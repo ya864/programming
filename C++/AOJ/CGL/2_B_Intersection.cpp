@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 using namespace std;
-using std::setprecision;
 typedef long long llong;
 #define MAX 100000
 #define INF (1 << 30)
@@ -56,6 +55,17 @@ public:
 // ベクトル
 typedef Point Vector;
 
+// 線分
+struct Segment
+{
+    Point p1, p2;
+    Segment(Point a, Point b)
+    {
+        p1 = a;
+        p2 = b;
+    }
+};
+
 // ベクトルの内積の計算
 double dot(Vector a, Vector b)
 {
@@ -90,16 +100,6 @@ bool intersect(Segment s1, Segment s2) {
     return intersectPP(s1.p1, s1.p2, s2.p1, s2.p2);
 }
 
-// 線分
-struct Segment
-{
-    Point p1, p2;
-    Segment(Point a, Point b)
-    {
-        p1 = a;
-        p2 = b;
-    }
-};
 
 // 線分が直行かを返す
 bool isOrthogonal(Segment s1, Segment s2)
@@ -164,45 +164,23 @@ double getDistanceSS(Segment s1, Segment s2)
 
 int main(void)
 {
-    double x1, y1, x2, y2;
-    cin >> x1 >> y1 >> x2 >> y2;
-    
     int q;
     cin >> q;
 
-    Point p1 = Point(x1, y1);
-    Point p2 = Point(x2, y2);
-
-    double x3, y3;
+    double x1, y1, x2, y2, x3, y3, x4, y4;
     for (int i = 0; i < q; i++)
     {
-        cin >> x3 >> y3;
+        cin >> x1 >> y1 >> x2 >> y2 >> x3 >> y3 >> x4 >> y4;
         
+        Segment s1 = Segment(Point(x1, y1), Point(x2, y2));
+        Segment s2 = Segment(Point(x3, y3), Point(x4, y4));
 
-        Point p3 = Point(x3, y3);
-        auto ans = ccw(p1, p2, p3);
-        string s;
-        switch (ans) {
-            case COUNTER_CLOCKWISE:
-                s = "COUNTER_CLOCKWISE";
-                break;
-            case CLOCKWISE:
-                s = "CLOCKWISE";
-                break;
-            case ONLINE_BACK:
-                s = "ONLINE_BACK";
-                break;
-            case ONLINE_FRONT:
-                s = "ONLINE_FRONT";
-                break;
-            case ON_SEGMENT:
-                s = "ON_SEGMENT";
-                break;
-            default:
-                break;
+        if (intersect(s1, s2)) {
+            cout << 1 << endl;
         }
-        cout << fixed << setprecision(10);
-        cout << s << endl;
+        else {
+            cout << 0 << endl;
+        }
     }
     return 0;
 }
