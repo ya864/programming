@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstdlib>
+#include <bits/stdc++.h>
 #include <deque>
 #include <iostream>
 #include <map>
@@ -11,6 +12,8 @@
 #include <string>
 #include <vector>
 using namespace std;
+using std::setprecision;
+
 typedef long long llong;
 #define MAX 100000
 #define INF (1 << 30)
@@ -58,6 +61,7 @@ double cross(Vector a, Vector b) {
     return a.x * b.y - a.y * b.x;
 }
 
+double norm(Vector a) { return a.x * a.x + a.y * a.y; }
 
 // 線分
 struct Segment
@@ -95,26 +99,34 @@ public:
 // 多角形
 typedef vector<Point> Polygon;
 
+Point project(Segment s, Point p)
+{
+    Vector base = s.p2 - s.p1;
+    double r = dot(p - s.p1, base) / norm(base);
+    return s.p1 + base * r;
+}
+
+Point reflect(Segment s, Point p){
+    return p + (project(s,p) - p) * 2.0;
+}
+
 int main(void)
 {
+    double x1, y1, x2, y2;
+    cin >> x1 >> y1 >> x2 >> y2;
+    Segment s(Point(x1, y1), Point(x2, y2));
     int q;
     cin >> q;
-    double x1, y1, x2, y2, x3, y3, x4, y4;
 
+    double x, y;
     for (int i = 0; i < q; i++)
     {
-        cin >> x1 >> y1 >> x2 >> y2 >> x3 >> y3 >> x4 >> y4;
+        cin >> x >> y;
 
-        Segment s1(Point(x1, y1), Point(x2, y2));
-        Segment s2(Point(x3, y3), Point(x4, y4));
-
-        if (isParallel(s1, s2)) {
-            cout << "2" << endl;
-        } else if (isOrthogonal(s1, s2)) {
-            cout << "1" << endl;
-        } else {
-            cout << "0" << endl;
-        }
+        Point ans = project(s, Point(x, y));
+        
+        cout << fixed << setprecision(10);
+        cout << ans.x << " " << ans.y << endl;
     }
     return 0;
 }
