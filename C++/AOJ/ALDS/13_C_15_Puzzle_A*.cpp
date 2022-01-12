@@ -1,12 +1,12 @@
 // Astar
 #include <algorithm>
+#include <cassert>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <deque>
 #include <iostream>
 #include <map>
-#include <cmath>
-#include <cassert>
 #include <math.h>
 #include <queue>
 #include <stack>
@@ -26,95 +26,108 @@ static const int dy[4] = {1, 0, -1, 0};
 static const char dir[4] = {'r', 'u', 'l', 'd'};
 int MDT[N2][N2];
 
-struct Puzzle {int f[N2], space, MD;};
+struct Puzzle
+{
+    int f[N2], space, MD;
+    int cost;
 
-Puzzle state;
-int limit; // 深さの制限
-int path[LIMIT];
+    bool operator < (const Puzzle &p) const {
+        for (int i = 0; i < N2; i++) {
+            if (f[i] == p.f[i]) continue;
+            return f[i] < p.f[i];
+        }
+        return false;
+    }
+};
 
-int getAllMD(Puzzle pz) {
+struct State {
+    Puzzle puzzle;
+    int estimated;
+    bool operator < (const State &s) const {
+        return estimated > s.estimated;
+    }
+};
+
+int getAllMD(Puzzle pz)
+{
     int sum = 0;
-    for (int i = 0; i < N2; i++) {
-        if (pz.f[i] == N2) continue;
+    for (int i = 0; i < N2; i++)
+    {
+        if (pz.f[i] == N2)
+            continue;
         sum += MDT[i][pz.f[i] - 1];
     }
     return sum;
 }
 
-bool isSolved() {
-    for (int i = 0; i < N2; i++) {
-        if (state.f[i] != i + 1) return false;
-    }
-    return true;
-}
+int astar(Puzzle s) {
+    priority_queue<State> PQ;
+    s.MD = getAllMD(s);
+    s.cost = 0;
+    map<Puzzle, bool> V;
+    Puzzle u, v;
+    State initial;
+    initial.puzzle = s;
+    initial.estimated = getAllMD(s);
+    PQ.push(initial);
 
-bool dfs(int depth, int prev) {
-    if (state.MD == 0) return true;
-    // 現在の深さにヒューリスティックを足して制限を超えたら枝を刈る
-    if (depth + state.MD > limit) return false;
+    while ( !PQ.empty() ) {
+        State st = PQ.top(); PQ.pop();
+        u = st.puzzle;
 
-    int sx = state.space / N;
-    int sy = state.space % N;
-    Puzzle tmp;
+        if (u.MD == 0) return u.cost;
+        V[u] = true;
 
-    for (int r = 0; r < 4; r++) {
-        int tx = sx + dx[r];
-        int ty = sy + dy[r];
-        if (tx < 0 || ty < 0 || tx >= N || ty >= N) continue;
-        if (max(prev, r) - min(prev, r) == 2) continue;
-        tmp = state;
-        // マンハッタン距離の差分を計算しつつ、ピースをスワップ
-        state.MD -= MDT[tx * N + ty][state.f[tx * N + ty] - 1];
-        state.MD += MDT[sx * N + sy][state.f[tx * N + ty] - 1];
-        swap(state.f[tx * N + ty], state.f[sx * N + sy]);
-        state.space = tx * N + ty;
-        if (dfs(depth + 1, r)) {
-            path[depth] = r;
-            return true;
-        }
-        state = tmp;
-    }
-    return false;
-}
+        int sx = u.space / N;
+        int sy = u.space % N;
 
-// 反復深化
-string iterative_deepening(Puzzle in) {
-    // 初期状態のマンハッタン距離
-    in.MD = getAllMD(in);
+        for (int r = 0; r < 4; r++) {
+            int tx = sx + dx[r];
+            int ty = sy + dy[r];
+            if (tx < 0 || ty < 0 || tx >= N || ty >= N) continue;
+            v = u;
 
-    for (limit = in.MD; limit <= LIMIT; limit++) {
-        state = in;
-        if (dfs(0, -100)) {
-            string ans = "";
-            for (int i = 0; i < limit; i++) {
-                ans += dir[path[i]];
+            v.MD -= MDT[tx * N + ty][v.f[tx * N + ty] - 1];
+            v.MD += MDT[sx * N + sy][v.f[tx * N + ty] - 1];
+
+            swap(v.f[sx * N + sy], v.f[tx * N + ty]);
+            v.space = tx * N + ty;
+            if ( !V[v] ) {
+                v.cost++;
+                State news;
+                news.puzzle = v;
+                news.estimated = v.cost + v.MD;
+                PQ.push(news);
             }
-            return ans;
         }
     }
-    return "unsolvable";
+    return -1;
 }
 
 int main(void)
 {
-    for (int i = 0; i < N2; i++) {
-        for (int j = 0; j < N2; j++) {
+    for (int i = 0; i < N2; i++)
+    {
+        for (int j = 0; j < N2; j++)
+        {
             MDT[i][j] = abs(i / N - j / N) + abs(i % N - j % N);
         }
     }
 
     Puzzle in;
 
-    for (int i = 0; i < N2; i++) {
+    for (int i = 0; i < N2; i++)
+    {
         cin >> in.f[i];
-        if (in.f[i] == 0) {
+        if (in.f[i] == 0)
+        {
             in.f[i] = N2;
             in.space = i;
         }
     }
 
-    string ans = iterative_deepening(in);
-    cout << ans.size() << endl;
+    int ans = astar(in);
+    cout << ans << endl;
 
     return 0;
 }
